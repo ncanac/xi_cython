@@ -1,0 +1,19 @@
+path 	= /home/frog/Documents/2pcf/komatsu/	# path name to directory where files are stored
+
+nproc 	= -1 		# nproc = number of processes to use, set to negative to use all available cores
+
+datafile = positions_z3.0_massive_4e12.txt		# file name of galaxy catalog, used for data-data and data-random pair counts
+
+randomfile = random_10000points_mod.txt	# file name of mock catalog, used for random-random and data-random pair counts
+
+rmin = 0		# minimum binning distance for both axes (transverse and line of sight directions) [Mpc/h]
+
+rmax = 150		# maximum binning distance for both axes [Mpc/h]
+
+nbins = 30		# number of linear bins along each axis
+
+DD = True		# set to True/False to toggle whether to calculate DD
+
+RR = True		# set to True/False to toggle whether to calculate RR
+
+DR = True		# set to True/False to toggle whether to calculate DR

@@ -1,0 +1,140 @@
+########################################################################
+xi_cython.py
+Redshift space two-point correlation function tree code
+Nicolas Canac
+ncanac@uci.edu
+8/17/2011
+########################################################################
+
+################
+I. Requirements
+################
+
+**Tested using Ubuntu 10.04 and 11.04
+
+To run this code, you must have Python 2 (tested with release 2.6 -- http://www.python.org/getit/releases/2.6/), 
+Cython (v. 0.14.1 -- http://cython.org/), and the GCC compiler. In addition, you should install the numpy 
+(http://numpy.scipy.org/), scipy (http://www.scipy.org/), and matplotlib (http://matplotlib.sourceforge.net/) 
+packages for Python.
+
+
+########################################
+II. Instructions for compiling the code
+########################################
+
+Unzip contents to folder. Type the command
+
+python setup.py build_ext --inplace
+
+
+#######################################
+III. Instructions for running the code
+#######################################
+
+Make sure you have entered the appropriate values in a configuration file (see section IV). To run the code,
+type the command
+
+python xi_cython.py -c config_file_name
+
+where 'config_file_name' is the name of the configuration file you want to use. The code may take a while to
+finish. There are currently no status updates, but as long as you don't get any errors, it should be working.
+
+Test code
+
+There are two test data files and a test configuration file, 'config_xi.txt'. To make sure the code is working,
+you may run the code using these test files, i.e. type
+
+python xi_cython.py -c config_xi.txt
+
+which will save three files, DD.txt, RR.txt, and DR.txt. If you wish to plot the results of this test run, type
+
+python plot.py
+
+For more details on plot, refer to section VI.
+
+
+#######################
+IV. Configuration file
+#######################
+
+The configuration file should contain the following entries:
+
+path - the path name to the directory where your data files to use for calculating the pair counts are stored
+nproc - the number of processes you wish to use. If set to a negative value or zero, this will default to the
+	maximum number of available cores.
+datafile - file to use for calculating data-data and data-random pair counts. There should be three columns of
+	numbers, corresponding to the x, y, and z coordinates. x-y is assumed to be the transverse plane, and z
+	is assumed to be the line of sight direction.
+randomfile - file to use for calculating random-random and data-random pair counts. Formatting should be the same
+	as datafile.
+rmin - minimum binning distance.
+rmax - maximum binning distance.
+nbin - number of bins to use. Currently, only linear bins are supported.
+DD - toggles whether or not to compute data-data pair counts. "True" to calculate, "False" to not. Useful if, for instance, 
+	you wish to use the results from a previous run, you may set DD to "False" (or anything that's not "True")
+	and it will not be re-calculated.
+RR - same as DD but for random-random pair counts.
+DR - same for data-random pair counts.
+
+Please use the exact format as in the example configuration file (config_xi.txt), and just change the values as needed. I
+have not written a very sophistocated text parser yet, so if you significantly change the formatting, it might break
+something.
+
+
+##########
+V. Output
+##########
+
+One output file will be produced for each DD, RR, or DR flag that is set to "True." The output file contains 4 numbers and
+a 2-D array. The first number is the minimum binning distance. The second number is the maximum binning distance. Third is
+the width of each bin. Fourth number is the number of points in the corresponding data file (for DR, this number is just a
+placeholder, and is set to -99). The 2-D array contains the pair counts for each corresponding bin, where the entry in
+location [0][0] is the origin.
+
+So, for instance, if you bin from 0 to 100 using 5 bins along each axis, you might have something like this, where the
+axes labels are included here for clarity (they are not in the output file).
+
+        0-20    20-40    40-60    60-80    80-100 [Mpc/h] (transverse)
+0-20    544     300      260      237      235
+20-40   845     772      722      716      687
+40-60   1238    1175     1173     1137     1120
+60-80   1633    1609     1580     1532     1483
+80-100  2051    2013     1972     1906     1867
+(LoS)
+
+An example output could be
+
+0
+100
+20
+1000
+544     300      260      237      235
+845     772      722      716      687
+1238    1175     1173     1137     1120
+1633    1609     1580     1532     1483
+2051    2013     1972     1906     1867
+
+
+#############
+VI. Plotting
+#############
+
+You will probably want to write your own plotting code, but for convenience, I have included mine, though it may not display
+well, depending on what xi looks like. To plot a result, simply type the command
+
+plot.py --DD DD_file_name --RR RR_file_name --DR DR_file_name
+
+where XX_file_name is the name of the file name corresponding to a data-data, random-random, or data-random pair counts
+output file produced by running xi_cython.py. This will calculate the correlation function using the Landy-Szalay
+estimator and produce a 3-D contour plot of the result.
+
+
+###########
+VII. Input
+###########
+
+Input files, as stated earlier, should be in the form of three columns of floating point numbers. Numbers on each line should 
+be separated by one or more spaces. The first column corresponds to the x coordinate, the second to the y coordinate, and the 
+third to the z coordinate. The transverse plane is assumed to be the x-y plane, and the z axis is assumed to be the line of
+sight direction. Further, I assume that the sample area is far enough away from the observer that we can ignore angular effects.
+
